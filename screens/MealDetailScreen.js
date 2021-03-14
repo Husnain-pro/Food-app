@@ -1,8 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomeHeaderButton from '../components/HeaderButton';
-import { MEALS } from '../data/dummy-data';
+import { toggleFavorite } from '../store/actions/mealActions';
 
 const ListItem = (props) => {
 	return (
@@ -13,19 +14,30 @@ const ListItem = (props) => {
 };
 
 const MealDetailScreen = ({ route, navigation }) => {
+	const availableMeals = useSelector((state) => state.meals.meals);
+	const dispatch = useDispatch();
 	const { categoryId } = route.params;
-	const selectedMeal = MEALS.find((c) => c.id === categoryId);
+	const isFavorite = useSelector((state) => {
+		return state.meals.favoriteMeals.some((meal) => meal.id === categoryId);
+	});
+	const selectedMeal = availableMeals.find((c) => c.id === categoryId);
 	const [value, onChangeText] = useState(selectedMeal.title);
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			title: value === '' ? 'Category Meal Screen' : value,
-			headerRight: () => (
-				<HeaderButtons HeaderButtonComponent={CustomeHeaderButton}>
-					<Item title="Favorite" iconName="ios-star" onPress={() => alert('search')} />
-				</HeaderButtons>
-			)
+			headerRight: () => {
+				return (
+					<HeaderButtons HeaderButtonComponent={CustomeHeaderButton}>
+						<Item
+							title="Favorite"
+							iconName={isFavorite ? 'ios-star' : 'ios-star-outline'}
+							onPress={() => dispatch(toggleFavorite(categoryId))}
+						/>
+					</HeaderButtons>
+				);
+			}
 		});
-	}, [navigation, value]);
+	}, [navigation, value, isFavorite, categoryId, dispatch, toggleFavorite]);
 	return (
 		<ScrollView>
 			<Image source={{ uri: selectedMeal.imageUrl }} style={styles.image} />

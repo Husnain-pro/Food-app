@@ -1,9 +1,20 @@
 import React, { useLayoutEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useSelector } from 'react-redux';
 import CustomeHeaderButton from '../components/HeaderButton';
 import MealList from '../components/MealList';
-import { MEALS } from '../data/dummy-data';
+
 const FavouriteScreen = ({ navigation }) => {
+	const favMeals = useSelector((state) => state.meals.favoriteMeals);
+	if (favMeals.length === 0 || !favMeals) {
+		return (
+			<View style={styles.content}>
+				<Text>No favorite meals. Start adding some!</Text>
+			</View>
+		);
+	}
+
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerLeft: () => (
@@ -13,16 +24,15 @@ const FavouriteScreen = ({ navigation }) => {
 			)
 		});
 	}, [navigation]);
-	const mealData = MEALS.filter((meal) => meal.id === 'm1' || meal.id === 'm2');
-	return <MealList listData={mealData} navigation={navigation} />;
+	return <MealList listData={favMeals} navigation={navigation} />;
 };
 
 export default FavouriteScreen;
 
-// const styles = StyleSheet.create({
-// 	screen: {
-// 		flex: 1,
-// 		alignItems: 'center',
-// 		justifyContent: 'center'
-// 	}
-// });
+const styles = StyleSheet.create({
+	content: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
+	}
+});

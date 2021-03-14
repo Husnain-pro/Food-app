@@ -4,7 +4,9 @@ import * as Font from 'expo-font';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { enableScreens } from 'react-native-screens';
+import { Provider } from 'react-redux';
 import MealsFavTabNavigator from './navigation/MealsNavigator';
+import store from './store/store';
 
 enableScreens();
 const fetchFonts = () => {
@@ -23,7 +25,9 @@ export default function App() {
 	return (
 		<View style={styles.container}>
 			<NavigationContainer>
-				<MealsFavTabNavigator />
+				<Provider store={store}>
+					<MealsFavTabNavigator />
+				</Provider>
 			</NavigationContainer>
 		</View>
 	);
